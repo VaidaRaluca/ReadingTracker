@@ -8,13 +8,12 @@ using System.Threading.Tasks;
 
 namespace ReadingTracker.Core.Interfaces
 {
-
-    public interface IReaderService
+    public interface IBookService
     {
-        Task<IEnumerable<ReaderDto>> GetAllAsync();
-        Task<ReaderDto?> GetByIdAsync(int id);
-        Task<ReaderDto> CreateAsync(ReaderDto readerDto);
-        Task<bool> UpdateAsync(int id, ReaderDto readerDto);
+        Task<IEnumerable<BookDto>> GetAllAsync();
+        Task<BookDto?> GetByIdAsync(int id);
+        Task<BookDto> CreateAsync(BookDto dto);
+        Task<bool> UpdateAsync(int id, BookDto dto);
         Task<bool> DeleteAsync(int id);
     }
 

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using ReadingTracker.API.Middlewares;
 using ReadingTracker.Core.Interfaces;
 using ReadingTracker.Database;
 using ReadingTracker.Database.Repos;
@@ -29,6 +30,7 @@ builder.Services.AddScoped<IReaderRepo, ReaderRepo>();
 builder.Services.AddScoped<IBookRepo, BookRepo>();
 builder.Services.AddScoped<IReaderBookRepo, ReaderBookRepo>();
 builder.Services.AddScoped<IReaderService, ReaderService>();
+builder.Services.AddScoped<IBookService, BookService>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -42,9 +44,13 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// Mapping
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
 var app = builder.Build();
 
 // Middleware
+app.UseErrorHandlingMiddleware();
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 

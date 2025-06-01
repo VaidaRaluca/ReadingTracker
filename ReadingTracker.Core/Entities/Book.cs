@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ReadingTracker.Core.Entities
 {
-    public class Book : BaseEntity
+    public class Book
     {
         public int Id { get; set; }
         public string ISBN { get; set; }

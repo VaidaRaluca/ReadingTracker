@@ -1,4 +1,5 @@
-﻿using ReadingTracker.Core.Entities;
+﻿using ReadingTracker.Core.Dtos;
+using ReadingTracker.Core.Entities;
 using ReadingTracker.Core.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -18,42 +19,61 @@ namespace ReadingTracker.Database.Services
             this.readerRepo = readerRepo;
         }
 
-        public async Task<IEnumerable<Reader>> GetAllAsync()
+        public async Task<IEnumerable<ReaderDto>> GetAllAsync()
         {
-            return await this.readerRepo.GetAllAsync();
+            var readers = await readerRepo.GetAllAsync();
+            return readers.Select(r => new ReaderDto
+            {
+                Name = r.Name,
+                Age = r.Age
+            });
         }
 
-        public async Task<Reader?> GetByIdAsync(int id)
+        public async Task<ReaderDto?> GetByIdAsync(int id)
         {
-            return await this.readerRepo.GetByIdAsync(id);
+            var reader = await readerRepo.GetByIdAsync(id);
+            if (reader == null) return null;
+
+            return new ReaderDto
+            {
+                Name = reader.Name,
+                Age = reader.Age
+            };
         }
 
-        public async Task<Reader> CreateAsync(Reader reader)
+        public async Task<ReaderDto> CreateAsync(ReaderDto dto)
         {
-            await this.readerRepo.AddAsync(reader);
-            return reader;
+            var reader = new Reader
+            {
+                Name = dto.Name,
+                Age = dto.Age
+            };
+
+            await readerRepo.AddAsync(reader);
+            return dto;
         }
 
-        public async Task<bool> UpdateAsync(Reader reader)
+        public async Task<bool> UpdateAsync(int id, ReaderDto dto)
         {
-            var existing = await this.readerRepo.GetByIdAsync(reader.Id);
+            var existing = await readerRepo.GetByIdAsync(id);
             if (existing == null) return false;
 
-            existing.Name = reader.Name;
-            existing.Age = reader.Age;
+            existing.Name = dto.Name;
+            existing.Age = dto.Age;
 
-            await this.readerRepo.UpdateAsync(existing);
+            await readerRepo.UpdateAsync(existing);
             return true;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var existing = await this.readerRepo.GetByIdAsync(id);
+            var existing = await readerRepo.GetByIdAsync(id);
             if (existing == null) return false;
 
-            await this.readerRepo.DeleteAsync(existing.Id);
+            await readerRepo.DeleteAsync(existing.Id);
             return true;
         }
     }
+
 
 }

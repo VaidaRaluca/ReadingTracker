@@ -19,6 +19,19 @@ namespace ReadingTracker.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Book>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            });
+
+            modelBuilder.Entity<Reader>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            });
+
             modelBuilder.Entity<ReaderBook>()
                 .HasKey(rb => new { rb.BookId, rb.ReaderId });
 
@@ -31,32 +44,6 @@ namespace ReadingTracker.Database
                 .HasOne(rb => rb.Reader)
                 .WithMany(r => r.ReaderBooks)
                 .HasForeignKey(rb => rb.ReaderId);
-        }
-
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            var entries = ChangeTracker.Entries<BaseEntity>();
-
-            foreach (var entry in entries)
-            {
-                switch (entry.State)
-                {
-                    case EntityState.Added:
-                        entry.Entity.CreatedAt = DateTime.UtcNow;
-                        break;
-
-                    case EntityState.Modified:
-                        entry.Entity.ModifiedAt = DateTime.UtcNow;
-                        break;
-
-                    case EntityState.Deleted:
-                        entry.State = EntityState.Modified;
-                        entry.Entity.DeletedAt = DateTime.UtcNow;
-                        break;
-                }
-            }
-
-            return base.SaveChangesAsync(cancellationToken);
         }
 
 
