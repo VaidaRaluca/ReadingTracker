@@ -1,13 +1,7 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore.Metadata;
 using ReadingTracker.Core.Dtos;
 using ReadingTracker.Core.Entities;
 using ReadingTracker.Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 namespace ReadingTracker.Core.Services
 {
 

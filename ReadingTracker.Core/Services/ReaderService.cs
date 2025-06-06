@@ -1,11 +1,7 @@
-﻿using ReadingTracker.Core.Dtos;
+﻿using AutoMapper;
+using ReadingTracker.Core.Dtos;
 using ReadingTracker.Core.Entities;
 using ReadingTracker.Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 namespace ReadingTracker.Core.Services
 {
 
@@ -13,44 +9,33 @@ namespace ReadingTracker.Core.Services
     public class ReaderService : IReaderService
     {
         private readonly IReaderRepo readerRepo;
+        private readonly IMapper mapper;
 
-        public ReaderService(IReaderRepo readerRepo)
+        public ReaderService(IReaderRepo readerRepo, IMapper mapper)
         {
             this.readerRepo = readerRepo;
+            this.mapper = mapper;
         }
 
         public async Task<IEnumerable<ReaderDto>> GetAllAsync()
         {
             var readers = await readerRepo.GetAllAsync();
-            return readers.Select(r => new ReaderDto
-            {
-                Name = r.Name,
-                Age = r.Age
-            });
+            return mapper.Map<IEnumerable<ReaderDto>>(readers);
         }
 
         public async Task<ReaderDto?> GetByIdAsync(int id)
         {
             var reader = await readerRepo.GetByIdAsync(id);
             if (reader == null) return null;
-
-            return new ReaderDto
-            {
-                Name = reader.Name,
-                Age = reader.Age
-            };
+            return mapper.Map <ReaderDto>(reader);
         }
 
         public async Task<ReaderDto> CreateAsync(ReaderDto dto)
         {
-            var reader = new Reader
-            {
-                Name = dto.Name,
-                Age = dto.Age
-            };
-
-            await readerRepo.AddAsync(reader);
-            return dto;
+            var entity = mapper.Map<Reader>(dto);
+            entity.Id = 0; // idk
+            await readerRepo.AddAsync(entity);
+            return mapper.Map<ReaderDto>(entity);
         }
 
         public async Task<bool> UpdateAsync(int id, ReaderDto dto)
@@ -58,8 +43,7 @@ namespace ReadingTracker.Core.Services
             var existing = await readerRepo.GetByIdAsync(id);
             if (existing == null) return false;
 
-            existing.Name = dto.Name;
-            existing.Age = dto.Age;
+            mapper.Map(dto, existing);
 
             await readerRepo.UpdateAsync(existing);
             return true;

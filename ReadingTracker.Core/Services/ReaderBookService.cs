@@ -1,21 +1,19 @@
-﻿using ReadingTracker.Core.Dtos;
+﻿using AutoMapper;
+using ReadingTracker.Core.Dtos;
 using ReadingTracker.Core.Entities;
 using ReadingTracker.Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ReadingTracker.Core.Services
 {
     public class ReaderBookService : IReaderBookService
     {
         private readonly IReaderBookRepo readerBookRepo;
+        private readonly IMapper mapper;
 
-        public ReaderBookService(IReaderBookRepo readerBookRepo)
+        public ReaderBookService(IReaderBookRepo readerBookRepo, IMapper mapper)
         {
             this.readerBookRepo = readerBookRepo;
+            this.mapper = mapper;
         }
 
         public async Task<IEnumerable<ReaderBookDto>> GetAllAsync()
@@ -50,43 +48,19 @@ namespace ReadingTracker.Core.Services
             };
         }
 
-        public async Task<ReaderBookDto> CreateAsync(ReaderBookCreateDto dto)
+        public async Task<ReaderBookDto> CreateAsync(ReaderBookDto dto)
         {
-            var entity = new ReaderBook
-            {
-                BookId = dto.BookId,
-                ReaderId = dto.ReaderId,
-                Rating = dto.Rating,
-                StartedAt = dto.StartedAt,
-                EndedAt = dto.EndedAt
-            };
-
+            var entity = mapper.Map<ReaderBook>(dto);
             await readerBookRepo.AddAsync(entity);
-
-            // Fetch related names for response
-            var created = await readerBookRepo.GetAsync(dto.ReaderId, dto.BookId);
-
-            return new ReaderBookDto
-            {
-                BookId = created.BookId,
-                BookName = created.Book?.Name ?? "",
-                ReaderId = created.ReaderId,
-                ReaderName = created.Reader?.Name ?? "",
-                Rating = created.Rating,
-                StartedAt = created.StartedAt,
-                EndedAt = created.EndedAt
-            };
+            return mapper.Map<ReaderBookDto>(entity);
         }
 
-        public async Task<bool> UpdateAsync(int readerId, int bookId, ReaderBookCreateDto dto)
+        public async Task<bool> UpdateAsync(int readerId, int bookId, ReaderBookDto dto)
         {
             var existing = await readerBookRepo.GetAsync(readerId, bookId);
             if (existing == null) return false;
 
-            existing.Rating = dto.Rating;
-            existing.StartedAt = dto.StartedAt;
-            existing.EndedAt = dto.EndedAt;
-
+            mapper.Map(dto, existing);
             await readerBookRepo.UpdateAsync(existing);
             return true;
         }
@@ -100,5 +74,6 @@ namespace ReadingTracker.Core.Services
             return true;
         }
     }
+
 
 }

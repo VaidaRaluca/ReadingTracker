@@ -9,10 +9,10 @@ namespace ReadingTracker.Core.Dtos
     public class ReaderBookDto
     {
         public int BookId { get; set; }
-        public string BookName { get; set; }         
+        public string? BookName { get; set; }         
 
         public int ReaderId { get; set; }
-        public string ReaderName { get; set; }
+        public string? ReaderName { get; set; }
 
         public double Rating { get; set; }
         public DateTime StartedAt { get; set; }

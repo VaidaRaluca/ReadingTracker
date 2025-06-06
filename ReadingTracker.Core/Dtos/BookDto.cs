@@ -8,7 +8,6 @@ namespace ReadingTracker.Core.Dtos
 {
     public class BookDto
     {
-        //new
         public int Id { get; set; }
         public string ISBN { get; set; }
         public string Name { get; set; }
