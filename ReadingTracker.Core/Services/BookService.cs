@@ -3,13 +3,12 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using ReadingTracker.Core.Dtos;
 using ReadingTracker.Core.Entities;
 using ReadingTracker.Core.Interfaces;
-using ReadingTracker.Database.Repos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-namespace ReadingTracker.Database.Services
+namespace ReadingTracker.Core.Services
 {
 
     public class BookService : IBookService

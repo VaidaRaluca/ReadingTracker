@@ -8,18 +8,18 @@ namespace ReadingTracker.API.Controllers
     [Route("api/[controller]")]
     public class BooksController : ControllerBase
     {
-        private readonly IBookService _bookService;
+        private readonly IBookService bookService;
 
         public BooksController(IBookService bookService)
         {
-            _bookService = bookService;
+            this.bookService = bookService;
         }
 
         // GET: api/books
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookDto>>> GetAll()
         {
-            var books = await _bookService.GetAllAsync();
+            var books = await this.bookService.GetAllAsync();
             return Ok(books);
         }
 
@@ -27,10 +27,7 @@ namespace ReadingTracker.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<BookDto>> GetById(int id)
         {
-            var book = await _bookService.GetByIdAsync(id);
-            if (book == null)
-                return NotFound();
-
+            var book = await this.bookService.GetByIdAsync(id);
             return Ok(book);
         }
 
@@ -38,7 +35,7 @@ namespace ReadingTracker.API.Controllers
         [HttpPost]
         public async Task<ActionResult<BookDto>> Create([FromBody] BookDto dto)
         {
-            var created = await _bookService.CreateAsync(dto);
+            var created = await this.bookService.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
@@ -46,10 +43,7 @@ namespace ReadingTracker.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] BookDto dto)
         {
-            var updated = await _bookService.UpdateAsync(id, dto);
-            if (!updated)
-                return NotFound();
-
+            var updated = await this.bookService.UpdateAsync(id, dto);
             return NoContent();
         }
 
@@ -57,10 +51,7 @@ namespace ReadingTracker.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var deleted = await _bookService.DeleteAsync(id);
-            if (!deleted)
-                return NotFound();
-
+            var deleted = await this.bookService.DeleteAsync(id);
             return NoContent();
         }
     }

@@ -4,7 +4,7 @@ using ReadingTracker.API.Middlewares;
 using ReadingTracker.Core.Interfaces;
 using ReadingTracker.Database;
 using ReadingTracker.Database.Repos;
-using ReadingTracker.Database.Services;
+using ReadingTracker.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
