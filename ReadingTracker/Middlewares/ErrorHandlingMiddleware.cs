@@ -2,43 +2,46 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using ReadingTracker.Core.Exceptions;
 
 namespace ReadingTracker.API.Middlewares
 {
     public class ErrorHandlingMiddleware
     {
-        private readonly RequestDelegate _next;
+        private readonly RequestDelegate next;
 
         public ErrorHandlingMiddleware(RequestDelegate next)
         {
-            _next = next;
+            this.next = next;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
             try
             {
-                await _next(context);
+                await this.next(context);
             }
-            catch (Exception ex)
+            catch (ResourceMissingException ex)
             {
-                await HandleExceptionAsync(context, ex);
+                await RespondToExceptionAsync(context, HttpStatusCode.BadRequest, ex.Message, ex);
             }
         }
 
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+
+        private static Task RespondToExceptionAsync(HttpContext context, HttpStatusCode failureStatusCode, string message, Exception exception)
         {
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            context.Response.StatusCode = (int)failureStatusCode;
 
             var response = new
             {
-                Message = "An unexpected error occurred.",
-                Details = exception.Message  // Consider hiding details in production
+                Message = message,
+                Error = exception.GetType().Name,
+                Timestamp = DateTime.UtcNow
             };
 
-            var json = JsonSerializer.Serialize(response);
-            return context.Response.WriteAsync(json);
+            return context.Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver() }));
         }
     }
 }

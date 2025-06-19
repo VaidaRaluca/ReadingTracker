@@ -5,6 +5,8 @@ using ReadingTracker.Core.Interfaces;
 using ReadingTracker.Database;
 using ReadingTracker.Database.Repos;
 using ReadingTracker.Core.Services;
+using ReadingTracker.Core;
+using ReadingTracker.Api.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,12 +27,18 @@ builder.Services.AddDbContext<ReadingTrackerDbContext>(options =>
         sqlOptions => sqlOptions.MigrationsAssembly("ReadingTracker.Database")
     ));
 
+
 // DI: Repositories & Services
 builder.Services.AddScoped<IReaderRepo, ReaderRepo>();
 builder.Services.AddScoped<IBookRepo, BookRepo>();
 builder.Services.AddScoped<IReaderBookRepo, ReaderBookRepo>();
 builder.Services.AddScoped<IReaderService, ReaderService>();
 builder.Services.AddScoped<IBookService, BookService>();
+AppConfig.Init(builder.Configuration);
+
+
+builder.Services.AddSingleton<AuthService>();
+
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -48,6 +56,8 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
+
+
 
 // Middleware
 app.UseErrorHandlingMiddleware();

@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace ReadingTracker.Core.Dtos
 {
-    public class ReaderDto
+    public class AuthDto
     {
-        public int? Id { get; set; }
+        public string Token { get; set; }
+        public string Email { get; set; }
         public string Name { get; set; }
-        public int Age { get; set; }
-        public string Email { get; set; }   
-        public bool IsAdmin { get; set; }
     }
 }

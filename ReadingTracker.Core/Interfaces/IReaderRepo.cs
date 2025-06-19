@@ -11,6 +11,7 @@ namespace ReadingTracker.Core.Interfaces
     {
         Task<IEnumerable<Reader>> GetAllAsync();
         Task<Reader> GetByIdAsync(int id);
+        Task<Reader> GetByEmailAsync(string email);
         Task AddAsync(Reader reader);
         Task UpdateAsync(Reader reader);
         Task DeleteAsync(int id);

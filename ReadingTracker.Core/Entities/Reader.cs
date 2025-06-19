@@ -15,6 +15,18 @@ namespace ReadingTracker.Core.Entities
         public int Id { get; set; }
         public string Name { get; set; }
         public int Age { get; set; }
+
+        [Required, EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        public byte[] PasswordHash { get; set; }
+
+        [Required]
+        public byte[] PasswordSalt { get; set; }
+
+        public bool IsAdmin { get; set; } = false;
+
         public virtual ICollection<ReaderBook> ReaderBooks { get; set; }
     }
 

@@ -54,5 +54,20 @@ namespace ReadingTracker.API.Controllers
             var deleted = await this.readerService.DeleteAsync(id);
             return NoContent();
         }
+
+        [HttpPost("register")]
+        public async Task<ActionResult<AuthDto>> Register(RegisterDto dto)
+        {
+            var result = await readerService.RegisterAsync(dto);
+            return Ok(result);
+        }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<AuthDto>> Login(LoginDto dto)
+        {
+            var result = await readerService.LoginAsync(dto);
+            return Ok(result);
+        }
+
     }
 }
