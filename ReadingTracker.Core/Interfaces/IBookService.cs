@@ -12,6 +12,7 @@ namespace ReadingTracker.Core.Interfaces
     {
         Task<IEnumerable<BookDto>> GetAllAsync();
         Task<BookDto?> GetByIdAsync(int id);
+        Task<BookDto?> GetByNameAsync(string name);
         Task<BookDto> CreateAsync(BookDto dto);
         Task<bool> UpdateAsync(int id, BookDto dto);
         Task<bool> DeleteAsync(int id);

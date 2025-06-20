@@ -24,6 +24,14 @@ namespace ReadingTracker.Database.Repos
                 throw new ResourceMissingException("Book not found");
             return result;
         }
+        public async Task<Book> GetByNameAsync(string name)
+        {
+            var result = await this.context.Books.Include(b => b.ReaderBooks).FirstOrDefaultAsync(b => b.Name == name);
+            if (result == null)
+                throw new ResourceMissingException("Book not found");
+            return result;
+        }
+
         public async Task AddAsync(Book book) { this.context.Books.Add(book); await this.context.SaveChangesAsync(); }
         public async Task UpdateAsync(Book book) { this.context.Books.Update(book); await this.context.SaveChangesAsync(); }
         public async Task DeleteAsync(int id)

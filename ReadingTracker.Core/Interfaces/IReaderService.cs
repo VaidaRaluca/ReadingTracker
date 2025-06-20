@@ -14,13 +14,10 @@ namespace ReadingTracker.Core.Interfaces
         Task<IEnumerable<ReaderDto>> GetAllAsync();
         Task<ReaderDto?> GetByIdAsync(int id);
         Task<ReaderDto?> GetByEmailAsync(string email);
-        Task<ReaderDto> CreateAsync(ReaderDto readerDto);
         Task<bool> UpdateAsync(int id, ReaderDto readerDto);
         Task<bool> DeleteAsync(int id);
-
         Task<AuthDto> RegisterAsync(RegisterDto dto);
         Task<AuthDto> LoginAsync(LoginDto dto);
-
 
 
     }

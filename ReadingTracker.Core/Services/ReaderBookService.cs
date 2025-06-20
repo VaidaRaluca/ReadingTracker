@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using ReadingTracker.Core.Dtos;
 using ReadingTracker.Core.Entities;
+using ReadingTracker.Core.Exceptions;
 using ReadingTracker.Core.Interfaces;
+using System.Reflection.PortableExecutable;
 
 namespace ReadingTracker.Core.Services
 {
@@ -34,7 +36,8 @@ namespace ReadingTracker.Core.Services
         public async Task<ReaderBookDto?> GetByIdsAsync(int readerId, int bookId)
         {
             var rb = await readerBookRepo.GetAsync(readerId, bookId);
-            if (rb == null) return null;
+            if (rb == null)
+                throw new ResourceMissingException("Book/Reader not found");
 
             return new ReaderBookDto
             {
@@ -52,13 +55,16 @@ namespace ReadingTracker.Core.Services
         {
             var entity = mapper.Map<ReaderBook>(dto);
             await readerBookRepo.AddAsync(entity);
-            return mapper.Map<ReaderBookDto>(entity);
+
+            var fullEntity = await readerBookRepo.GetAsync(dto.ReaderId, dto.BookId);
+
+            return mapper.Map<ReaderBookDto>(fullEntity);
         }
 
         public async Task<bool> UpdateAsync(int readerId, int bookId, ReaderBookDto dto)
         {
             var existing = await readerBookRepo.GetAsync(readerId, bookId);
-            if (existing == null) return false;
+            if (existing == null) throw new ResourceMissingException("Book/Reader not found");
 
             mapper.Map(dto, existing);
             await readerBookRepo.UpdateAsync(existing);
@@ -68,7 +74,7 @@ namespace ReadingTracker.Core.Services
         public async Task<bool> DeleteAsync(int readerId, int bookId)
         {
             var existing = await readerBookRepo.GetAsync(readerId, bookId);
-            if (existing == null) return false;
+            if (existing == null) throw new ResourceMissingException("Book/Reader not found");
 
             await readerBookRepo.DeleteAsync(readerId, bookId);
             return true;

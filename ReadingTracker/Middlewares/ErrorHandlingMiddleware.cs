@@ -26,6 +26,14 @@ namespace ReadingTracker.API.Middlewares
             {
                 await RespondToExceptionAsync(context, HttpStatusCode.BadRequest, ex.Message, ex);
             }
+            catch(UnauthorizedException ex)
+            {
+                await RespondToExceptionAsync(context, HttpStatusCode.Unauthorized, ex.Message, ex);
+            }
+            catch (ConflictException ex)
+            {
+                await RespondToExceptionAsync(context, HttpStatusCode.Conflict, ex.Message, ex);
+            }
         }
 
 

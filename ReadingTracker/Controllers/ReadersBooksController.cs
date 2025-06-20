@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ReadingTracker.Core.Dtos;
 using ReadingTracker.Core.Interfaces;
+using System.Globalization;
 
 namespace ReadingTracker.Api.Controllers
 {
@@ -17,10 +18,43 @@ namespace ReadingTracker.Api.Controllers
 
             // GET: api/readerbooks
             [HttpGet]
-            public async Task<ActionResult<IEnumerable<ReaderBookDto>>> GetAll()
+            public async Task<ActionResult<IEnumerable<ReaderBookDto>>> GetAll(
+                 [FromQuery] string? sortBy = null,[FromQuery] string? order = "asc", [FromQuery] int? rating = null, [FromQuery] string? startMonth = null, [FromQuery] string? endMonth = null)
             {
                 var items = await this.readerBookService.GetAllAsync();
-                return Ok(items);
+
+            if (rating.HasValue)
+            {
+                items = items.Where(i => Math.Floor(i.Rating) == rating.Value);
+            }
+
+            if (!string.IsNullOrEmpty(startMonth)
+                 && DateTime.TryParseExact(startMonth, "MMMM", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt))
+            {
+                var monthNum = dt.Month; 
+                items = items.Where(i => i.StartedAt.Month == monthNum);
+            }
+
+            if (!string.IsNullOrEmpty(endMonth)
+                  && DateTime.TryParseExact(endMonth, "MMMM", CultureInfo.InvariantCulture, DateTimeStyles.None, out var et))
+            {
+                var monthNum = et.Month; 
+                items = items.Where(i => i.EndedAt.Month == monthNum);
+            }
+
+
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                if (sortBy.Equals("rating", StringComparison.OrdinalIgnoreCase))
+                {
+                    items = order.ToLower() switch
+                    {
+                        "desc" => items.OrderByDescending(i => i.Rating),
+                        _ => items.OrderBy(i => i.Rating),
+                    };
+                }
+            }
+            return Ok(items);
             }
 
             // GET: api/readerbooks/{readerId}/{bookId}

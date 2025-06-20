@@ -12,6 +12,13 @@ namespace ReadingTracker.Core.Services
     {
         public string GetToken(Reader user, string role)
         {
+            if (AppConfig.JWTSettings == null)
+                throw new InvalidOperationException("JWTSettings is not configured.");
+
+            if (string.IsNullOrEmpty(AppConfig.JWTSettings.SecurityKey))
+                throw new InvalidOperationException("SecurityKey is null or empty.");
+
+
             var jwtTokenHandler = new JwtSecurityTokenHandler();
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppConfig.JWTSettings.SecurityKey));

@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using ReadingTracker.API.Middlewares;
 using ReadingTracker.Core.Interfaces;
 using ReadingTracker.Database;
 using ReadingTracker.Database.Repos;
@@ -34,6 +33,8 @@ builder.Services.AddScoped<IBookRepo, BookRepo>();
 builder.Services.AddScoped<IReaderBookRepo, ReaderBookRepo>();
 builder.Services.AddScoped<IReaderService, ReaderService>();
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IReaderBookService, ReaderBookService>();
+
 AppConfig.Init(builder.Configuration);
 
 
@@ -60,9 +61,11 @@ var app = builder.Build();
 
 
 // Middleware
-app.UseErrorHandlingMiddleware();
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
+
+app.UseErrorHandlingMiddleware();
+
 
 if (app.Environment.IsDevelopment())
 {

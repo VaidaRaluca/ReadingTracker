@@ -17,9 +17,33 @@ namespace ReadingTracker.API.Controllers
 
         // GET: api/readers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReaderDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<ReaderDto>>> GetAll(
+             [FromQuery] string? sortBy, [FromQuery] string? order, [FromQuery] int? age, [FromQuery] bool? isadmin)
         {
             var readers = await this.readerService.GetAllAsync();
+
+            if (age!=null)
+            {
+                readers = readers.Where(b => b.Age != null && b.Age==age);
+            }
+
+            if (isadmin != null)
+            {
+                readers = readers.Where(b => b.IsAdmin != null && b.IsAdmin == isadmin);
+            }
+
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                readers = (sortBy.ToLower(), order.ToLower()) switch
+                {
+                    ("name", "asc") => readers.OrderBy(r => r.Name, StringComparer.OrdinalIgnoreCase),
+                    ("name", "desc") => readers.OrderByDescending(r => r.Name, StringComparer.OrdinalIgnoreCase),
+                    ("age", "asc") => readers.OrderBy(r => r.Age),
+                    ("age", "desc") => readers.OrderByDescending(r => r.Age),
+                    _ => readers
+                };
+            }
+
             return Ok(readers);
         }
 
@@ -29,14 +53,6 @@ namespace ReadingTracker.API.Controllers
         {
             var reader = await this.readerService.GetByIdAsync(id);
             return Ok(reader);
-        }
-
-        // POST: api/readers
-        [HttpPost]
-        public async Task<ActionResult<ReaderDto>> Create([FromBody] ReaderDto dto)
-        {
-            var created = await this.readerService.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
         // PUT: api/readers/{id}
