@@ -38,12 +38,14 @@ namespace ReadingTracker.Database
             modelBuilder.Entity<ReaderBook>()
                 .HasOne(rb => rb.Book)
                 .WithMany(b => b.ReaderBooks)
-                .HasForeignKey(rb => rb.BookId);
+                .HasForeignKey(rb => rb.BookId)
+                .OnDelete(DeleteBehavior.Cascade); 
 
             modelBuilder.Entity<ReaderBook>()
                 .HasOne(rb => rb.Reader)
                 .WithMany(r => r.ReaderBooks)
-                .HasForeignKey(rb => rb.ReaderId);
+                .HasForeignKey(rb => rb.ReaderId)
+                .OnDelete(DeleteBehavior.Cascade); 
         }
 
 
